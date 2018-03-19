@@ -120,3 +120,13 @@ struct _PEB_T
 typedef _PEB_T<DWORD, DWORD64, 34> PEB32;
 typedef _PEB_T<DWORD64, DWORD, 30> PEB64;
 #pragma pack(pop)
+
+
+// Need to lookup and call NtQueryInformationProcess dynamically...
+typedef NTSTATUS(WINAPI* myNtQueryInformationProcess)(
+	HANDLE ProcessHandle,
+	DWORD ProcessInformationClass,
+	PVOID ProcessInformation,
+	DWORD ProcessInformationLength,
+	PDWORD ReturnLength
+	);

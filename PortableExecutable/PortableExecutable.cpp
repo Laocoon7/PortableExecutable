@@ -34,10 +34,18 @@ PortableExecutable::~PortableExecutable()
 
 PIMAGE_DOS_HEADER PortableExecutable::getDOSHeader()
 {
+	HMODULE hNTDLL = LoadLibrary(L"ntdll");
+	if (!hNTDLL)
+		return 0;
+
+	myNtQueryInformationProcess NtQIP = (myNtQueryInformationProcess)GetProcAddress(hNTDLL, "NtQueryInformationProcess");
+	if (!NtQIP)
+		return 0;
+
 	PROCESS_BASIC_INFORMATION* pBasicInfo = new PROCESS_BASIC_INFORMATION;
 	DWORD dwReturnLength = 0;
 
-	NtQueryInformationProcess(this->hProcess, ProcessBasicInformation, pBasicInfo, sizeof PROCESS_BASIC_INFORMATION, &dwReturnLength);
+	NtQIP(this->hProcess, ProcessBasicInformation, pBasicInfo, sizeof PROCESS_BASIC_INFORMATION, &dwReturnLength);
 
 #ifdef _M_AMD64
 	PEB64* pPEB = new PEB64();
